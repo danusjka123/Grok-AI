@@ -1,0 +1,446 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agriculert Crop Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 35px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #808080;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0;
+        }
+
+        .green-button {
+            background-color: #28A745;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .crop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .crop-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .crop-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin-right: 10px;
+            background-color: #ddd; /* Placeholder */
+        }
+
+        .crop-type {
+            font-size: 12px;
+            color: #808080;
+            margin: 0;
+        }
+
+        .crop-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0;
+        }
+
+        .crop-disambiguation {
+            font-style: italic;
+            color: #808080;
+        }
+
+        .icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 16px;
+            cursor: pointer;
+            color: #808080;
+        }
+
+        .delete-icon {
+            color: #FF0000;
+        }
+
+        .envelope-icon {
+            color: #FF0000;
+        }
+
+        .calendar-card {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .zone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .zone-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 150px repeat(12, 1fr);
+            gap: 0;
+        }
+
+        .grid-header {
+            text-align: center;
+            font-size: 14px;
+            color: #808080;
+            padding: 5px;
+        }
+
+        .month-header {
+            grid-column: span 4;
+            text-align: left;
+            border-right: 1px solid #ddd;
+        }
+
+        .week-header {
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: #F0F8FF;
+        }
+
+        .category {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #000000;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .plus-icon {
+            color: #28A745;
+            margin-right: 5px;
+        }
+
+        .grid-cell {
+            position: relative;
+            height: 40px;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: #E8F5E9;
+        }
+
+        .jan-cell {
+            background-color: #E8F5E9;
+        }
+
+        .feb-cell {
+            background-color: #F0F8FF;
+        }
+
+        .mar-cell {
+            background-color: #FFFFFF;
+        }
+
+        .activity-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 10px;
+            color: #FFFFFF;
+            font-size: 12px;
+            height: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .block-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .block-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .block-icon {
+            font-size: 12px;
+            color: #FFFFFF;
+        }
+
+        .crop-stage {
+            background-color: #4CAF50;
+        }
+
+        .water-req {
+            background-color: #81D4FA;
+            color: #000000;
+        }
+
+        .water-req .block-icon {
+            color: #000000;
+        }
+
+        .fertilizer {
+            background-color: #1B5E20;
+        }
+
+        .pest-disease {
+            background-color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input class="search-input" type="text" placeholder="Search">
+        <span class="search-icon icon">🔍</span>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">Crop Calendar</h1>
+        <button class="green-button">+ Add Crop Agronomy</button>
+    </div>
+
+    <div class="crop-header">
+        <div class="crop-info">
+            <img class="crop-image" src="https://via.placeholder.com/40?text=Beets" alt="Beets">
+            <div>
+                <p class="crop-type">short term Crop</p>
+                <h2 class="crop-name">BEETS – <span class="crop-disambiguation">disambiguation</span></h2>
+            </div>
+        </div>
+        <div class="icons">
+            <span class="icon">ℹ️</span>
+            <span class="icon envelope-icon">✉️</span>
+            <span class="icon delete-icon">🗑️</span>
+        </div>
+        <button class="green-button">+ Add New Zone</button>
+    </div>
+
+    <div class="calendar-card">
+        <div class="zone-header">
+            <h3 class="zone-title">Wet Zone</h3>
+            <div class="icons">
+                <span class="icon">ℹ️</span>
+                <span class="icon">✏️</span>
+                <span class="icon delete-icon">🗑️</span>
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+            <!-- Month headers -->
+            <div class="grid-header"></div>
+            <div class="grid-header month-header" style="grid-column: span 4;">Jan</div>
+            <div class="grid-header month-header" style="grid-column: span 4;">Feb</div>
+            <div class="grid-header month-header" style="grid-column: span 4;">Mar</div>
+
+            <!-- Week headers -->
+            <div class="grid-header">Weeks</div>
+            <div class="grid-header week-header jan-cell">1</div>
+            <div class="grid-header week-header jan-cell">2</div>
+            <div class="grid-header week-header jan-cell">3</div>
+            <div class="grid-header week-header jan-cell">4</div>
+            <div class="grid-header week-header feb-cell">1</div>
+            <div class="grid-header week-header feb-cell">2</div>
+            <div class="grid-header week-header feb-cell">3</div>
+            <div class="grid-header week-header feb-cell">4</div>
+            <div class="grid-header week-header mar-cell">1</div>
+            <div class="grid-header week-header mar-cell">2</div>
+            <div class="grid-header week-header mar-cell">3</div>
+            <div class="grid-header week-header mar-cell">4</div>
+
+            <!-- Crop Stages row -->
+            <div class="category"><span class="plus-icon">+</span> Crop Stages</div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block crop-stage">
+                    <span class="block-text">Land Prep. Nursery</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block crop-stage">
+                    <span class="block-text"></span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block crop-stage">
+                    <span class="block-text">Seed sowing</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+
+            <!-- Water Requirements row -->
+            <div class="category"><span class="plus-icon">+</span> Water Requirements</div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block water-req">
+                    <span class="block-text">5-6 Drip Irrigat.</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block water-req">
+                    <span class="block-text">B0-80 Spring Irr.</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+
+            <!-- Fertilizer Application row -->
+            <div class="category"><span class="plus-icon">+</span> Fertilizer Application</div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block fertilizer">
+                    <span class="block-text">Lora, SO, N.</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block fertilizer">
+                    <span class="block-text">SAR800MOO.</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+
+            <!-- Pest & Disease row -->
+            <div class="category"><span class="plus-icon">+</span> Pest & Disease</div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block pest-disease">
+                    <span class="block-text">Pest 1</span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell">
+                <div class="activity-block pest-disease">
+                    <span class="block-text"></span>
+                    <div class="block-icons">
+                        <span class="block-icon">✏️</span>
+                        <span class="block-icon">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell jan-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell feb-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+            <div class="grid-cell mar-cell"></div>
+        </div>
+    </div>
+</body>
+</html>
+```
